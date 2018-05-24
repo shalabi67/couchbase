@@ -35,7 +35,7 @@ public class FindByIdTest {
         JsonDocument customerDocument = Converter.toJsonDocument(CustomerFactory.createDefault());
         when(bucket.get(anyString())).thenReturn(customerDocument);
 
-        CustomerCouchbaseRepository couchbaseRepository = new CustomerCouchbaseRepository(cluster, "", "");
+        CustomerCouchbaseRepository couchbaseRepository = RepositoryFactory.createCustomerRepository(cluster);
         Customer customer = couchbaseRepository.findById(CustomerFactory.ID);
 
         Assert.assertTrue(CustomerFactory.createDefault().equals(customer));
@@ -62,7 +62,7 @@ public class FindByIdTest {
             JsonDocument customerDocument = Converter.toJsonDocument(customerHavingNull);
             when(bucket.get(anyString())).thenReturn(customerDocument);
 
-            CustomerCouchbaseRepository couchbaseRepository = new CustomerCouchbaseRepository(cluster, "", "");
+            CustomerCouchbaseRepository couchbaseRepository = RepositoryFactory.createCustomerRepository(cluster);
             Customer customer = couchbaseRepository.findById(CustomerFactory.ID);
 
             Assert.assertTrue(customerHavingNull.equals(customer));

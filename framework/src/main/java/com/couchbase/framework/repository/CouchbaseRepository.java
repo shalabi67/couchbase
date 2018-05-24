@@ -88,7 +88,9 @@ public class CouchbaseRepository<T extends Entity> {
      * @return Reference to the entity that has been persisted
      */
     public T insert(T entity){
-        throw new NotImplementedException();
+        JsonDocument inputDocument = Converter.toJsonDocument(entity);
+        JsonDocument insertedDocument = couchbaseBucket.insert(inputDocument);
+        return (T)Converter.fromJsonDocument(insertedDocument, entityType);
     }
 
     /**

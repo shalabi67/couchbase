@@ -10,21 +10,22 @@ public class CustomerFactory {
    // public static final String = ;
     public static Customer createDefault() {
         return create(EMAIL, USER_NAME, FIRST_NAME,
-                LAST_NAME, PHONE_NUMBER);
+                LAST_NAME, PHONE_NUMBER, ID);
 
     }
     public static Customer create(String email,
                                   String userName,
                                   String firstName,
                                   String lastName,
-                                  String phoneNumber) {
+                                  String phoneNumber,
+                                  String id) {
         Customer customer = new Customer();
         customer.setEmail(email);
         customer.setFirstName(firstName);
         customer.setLastName(lastName);
         customer.setUserName(userName);
         customer.setPhoneNumber(phoneNumber);
-        customer.setId(ID);
+        customer.setId(id);
 
         return customer;
     }
