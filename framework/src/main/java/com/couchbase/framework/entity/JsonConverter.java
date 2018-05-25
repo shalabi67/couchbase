@@ -8,7 +8,7 @@ public class JsonConverter {
 	 * expected to be used by other Date conversion code
 	 */
 	@SuppressWarnings("WeakerAccess")
-	public static final String ISO_DATETIME_TIME_ZONE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
+	public static final String ISO_DATETIME_TIME_ZONE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss";
 	private final Gson gson = createGson();
 
 

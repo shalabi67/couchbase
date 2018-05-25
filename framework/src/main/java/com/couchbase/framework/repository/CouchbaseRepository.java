@@ -5,13 +5,24 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.document.JsonDocument;
+import com.couchbase.client.java.document.json.JsonArray;
+import com.couchbase.client.java.document.json.JsonObject;
+import com.couchbase.client.java.query.N1qlParams;
+import com.couchbase.client.java.query.N1qlQuery;
+import com.couchbase.client.java.query.N1qlQueryResult;
+import com.couchbase.client.java.query.N1qlQueryRow;
+import com.couchbase.client.java.query.ParameterizedN1qlQuery;
+import com.couchbase.client.java.query.consistency.ScanConsistency;
 import com.couchbase.framework.entity.Converter;
 import com.couchbase.framework.entity.Entity;
+import com.couchbase.framework.entity.JsonConverter;
 import com.couchbase.framework.exception.RepositoryException;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CouchbaseRepository<T extends Entity> {
     private Bucket couchbaseBucket;
@@ -58,6 +69,30 @@ public class CouchbaseRepository<T extends Entity> {
     private void iniEntityType() {
         this.entityType = ((Class) ((ParameterizedType) getClass()
                 .getGenericSuperclass()).getActualTypeArguments()[0]);
+    }
+
+    /**
+     * Get a list of items based on a based query
+     * @param query the query to execute
+     * @return List of items
+     */
+    public List<T> getItems(N1qlQuery query) {
+        List<T> customers = new ArrayList<T>();
+        try {
+            N1qlQueryResult result = couchbaseBucket.query(query);
+            List<N1qlQueryRow> list = result.allRows();
+
+            for(N1qlQueryRow row : list) {
+                JsonObject jsonObject = row.value();
+                JsonConverter jsonConverter = new JsonConverter();
+                T customer = (T)jsonConverter.fromJson(jsonObject.toString(), entityType);
+                customers.add(customer);
+            }
+        } catch (CouchbaseException e) {
+            throw new RepositoryException(e);
+        }
+
+        return customers;
     }
 
     /**

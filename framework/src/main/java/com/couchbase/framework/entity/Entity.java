@@ -44,4 +44,8 @@ public class Entity {
     public void setCas(long cas) {
         this.cas = cas;
     }
+
+    public String getKey() {
+        return getType() + "::" + getId();
+    }
 }
