@@ -5,24 +5,21 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.document.JsonDocument;
-import com.couchbase.client.java.document.json.JsonArray;
+import com.couchbase.client.java.document.JsonLongDocument;
 import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.N1qlParams;
 import com.couchbase.client.java.query.N1qlQuery;
 import com.couchbase.client.java.query.N1qlQueryResult;
 import com.couchbase.client.java.query.N1qlQueryRow;
-import com.couchbase.client.java.query.ParameterizedN1qlQuery;
-import com.couchbase.client.java.query.consistency.ScanConsistency;
 import com.couchbase.framework.entity.Converter;
 import com.couchbase.framework.entity.Entity;
 import com.couchbase.framework.entity.JsonConverter;
 import com.couchbase.framework.exception.RepositoryException;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.couchbase.framework.entity.Converter.toJsonDocument;
 
 public class CouchbaseRepository<T extends Entity> {
     private Bucket couchbaseBucket;
@@ -123,7 +120,7 @@ public class CouchbaseRepository<T extends Entity> {
      * @return Reference to the entity that has been persisted
      */
     public T insert(T entity){
-        JsonDocument inputDocument = Converter.toJsonDocument(entity);
+        JsonDocument inputDocument = toJsonDocument(entity);
         JsonDocument insertedDocument = couchbaseBucket.insert(inputDocument);
         return (T)Converter.fromJsonDocument(insertedDocument, entityType);
     }
@@ -135,7 +132,9 @@ public class CouchbaseRepository<T extends Entity> {
      * @return Reference to the entity that has been persisted
      */
     public T update(T entity){
-        throw new NotImplementedException();
+        JsonDocument inputDocument = toJsonDocument(entity);
+        JsonDocument updatedDocument = couchbaseBucket.replace(inputDocument);
+        return (T)Converter.fromJsonDocument(updatedDocument, entityType);
     }
 
     /**
@@ -145,7 +144,9 @@ public class CouchbaseRepository<T extends Entity> {
      * @return Reference to the entity that has been persisted
      */
     public T upsert(T entity){
-        throw new NotImplementedException();
+        JsonDocument inputDocument = toJsonDocument(entity);
+        JsonDocument updatedDocument = couchbaseBucket.upsert(inputDocument);
+        return (T)Converter.fromJsonDocument(updatedDocument, entityType);
     }
 
     /**
@@ -154,7 +155,21 @@ public class CouchbaseRepository<T extends Entity> {
      * @param entity Source entity to be deleted
      */
     public void delete(T entity){
-        throw new NotImplementedException();
+        JsonDocument inputDocument = toJsonDocument(entity);
+        couchbaseBucket.remove(inputDocument);
     }
+
+    /**
+     * creae or increment counter which can help in creating unique ids
+     * @param name counter name
+     * @param delta the increment or decrement amount.
+     * @param initial the initial value.
+     * @return new counter value or counter initial if it is created
+     */
+    public Long counter(String name, long delta, long initial) {
+        JsonLongDocument counterDocument =  couchbaseBucket.counter("counter::" + name, delta, initial);
+        return counterDocument.content();
+    }
+
 }
 

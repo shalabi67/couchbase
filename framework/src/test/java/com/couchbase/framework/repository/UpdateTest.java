@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class InsertTest {
+public class UpdateTest {
     @Mock
     private Cluster cluster;
 
@@ -37,8 +37,8 @@ public class InsertTest {
         when(bucket.insert(any(JsonDocument.class))).thenReturn(inputCustomer);
 
         CustomerCouchbaseRepository customerCouchbaseRepository = RepositoryFactory.createCustomerRepository(cluster);
-        Customer updatedCustomer = customerCouchbaseRepository.update(CustomerFactory.createDefault());
+        Customer insertedCustomer = customerCouchbaseRepository.insert(CustomerFactory.createDefault());
 
-        Assert.assertTrue(CustomerFactory.createDefault().equals(updatedCustomer));
+        Assert.assertTrue(CustomerFactory.createDefault().equals(insertedCustomer));
     }
 }
