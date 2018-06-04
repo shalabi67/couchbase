@@ -1,4 +1,4 @@
-package com.competency_filter.entity;
+package com.competence_filter.entity;
 
 public class Filter {
     private int count;

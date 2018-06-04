@@ -1,4 +1,4 @@
-package com.competency_filter.entity;
+package com.competence_filter.entity;
 
 import com.couchbase.framework.entity.Entity;
 
@@ -8,15 +8,16 @@ import java.util.List;
 /**
  * id is the searchPhrase
  */
-public class CompetencyFilter extends Entity {
+public class CompetenceFilter extends Entity {
+    public static String getId(String shopName, String searchPhrase) {
+        return shopName + "::" + searchPhrase;
+    }
     private String shop;
     private List<Filter> filters = new ArrayList<Filter>();
 
     public String getId() {
-        return shop + "::" + super.getId();
+        return CompetenceFilter.getId(shop, super.getId());
     }
-
-
 
     public String getShop() {
         return shop;

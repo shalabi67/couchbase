@@ -1,4 +1,4 @@
-package com.competency_filter.service;
+package com.competence_filter.service.data;
 
 public class DatabaseConfiguration {
     public String bucketName = "competency_filter";
